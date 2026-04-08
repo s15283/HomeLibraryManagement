@@ -19,8 +19,8 @@ class Book(models.Model):
     isbn = models.CharField(max_length=20, unique=True)
     publication_date = models.DateField()
     pages = models.IntegerField()
-    cover = models.CharField(max_length=20)
-    language = models.CharField(max_length=20)
+    cover = models.CharField(max_length=20, choices=COVERS)
+    language = models.CharField(max_length=20, choices=LANGUAGES)
     is_read = models.BooleanField(default=False)
     is_favorite = models.BooleanField(default=False)
 
