@@ -1,4 +1,22 @@
-from django.http import HttpResponse
+from django.shortcuts import HttpResponse, render
+from manage_books.models import Genre, Author
 
 def index(request):
-    return HttpResponse("Hello, world!")
+    genres = Genre.objects.all()
+    authors = Author.objects.all()
+    return render(request, 'manage_books/index.html', {'genres': genres, 'authors': authors})
+
+def book(request, book_id):
+    return render(request, 'manage_books/book.html', {'book_id': book_id})
+
+def author(request, author_id):
+    return render(request, 'manage_books/author.html', {'author_id': author_id})
+
+def publisher(request, publisher_id):
+    return render(request, 'manage_books/publisher.html', {'publisher_id': publisher_id})
+
+def series(request, series_id):
+    return render(request, 'manage_books/series.html', {'series_id': series_id})
+
+def note(request, note_id):
+    return render(request, 'manage_books/note.html', {'note_id': note_id})
