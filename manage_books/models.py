@@ -1,22 +1,21 @@
 from django.db import models
 import pytz
 
-# Create your models here.
 class Book(models.Model):
-
+    @property
+    def author(self):
+        return ', '.join([f"{author.first_name} {author.last_name}" for author in self.authors.all()])
+    
     COVERS = [
         ('hardcover', 'Hardcover'),
         ('paperback', 'Paperback'),
         ('ebook', 'E-book'),
         ('audiobook', 'Audiobook'),
     ]
-
     LANGUAGES = [
         ('english', 'English'),
-        ("polish", 'Polish'),
-        ('spanish', 'Spanish'),
-        ('french', 'French'),
-        ('german', 'German'),
+        ('polish', 'Polish'),
+        ('hebrew', 'Hebrew'),
         ('other', 'Other'),
     ]
 
@@ -33,20 +32,20 @@ class Book(models.Model):
     series = models.ForeignKey('Series', on_delete=models.RESTRICT, blank=True, null=True)
     genres = models.ManyToManyField('Genre', related_name='books', blank=True)
     topics = models.ManyToManyField('Topic', related_name='books', blank=True)
-
+    
 class Author(models.Model):
     TITLES = [
-            ('ks', "Ks."),
-            ('dr', "Dr."),
-            ('prof', "Prof."),
-            ('mr', "Mr."),
-            ('ms', "Ms."),
-        ]
+        ('ks', 'Ks.'),
+        ('dr', 'Dr.'),
+        ('prof', 'Prof.'),
+        ('bp', 'Bp.'),
+    ]
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    nationality = models.CharField(max_length=100)
-    title = models.CharField(max_length=20, choices=TITLES, blank=True, null=True)
     alias = models.CharField(max_length=100, blank=True, null=True)
+    nationality = models.CharField(max_length=100)
+    title = models.CharField(max_length=50, choices=TITLES, blank=True, null=True)
 
 class Publisher(models.Model):
     name = models.CharField(max_length=200)
@@ -54,7 +53,6 @@ class Publisher(models.Model):
     founded_year = models.IntegerField()
     website = models.URLField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    # books = models.ManyToOneField(Book, related_name='publisher')
 
 class Genre(models.Model):
     name = models.CharField(max_length=100)
@@ -62,6 +60,7 @@ class Genre(models.Model):
 class Series(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
+    authors = models.ManyToManyField(Author, related_name='series', blank=True)
 
 class Topic(models.Model):
     name = models.CharField(max_length=100)
@@ -70,4 +69,4 @@ class Topic(models.Model):
 class Note(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE,)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
